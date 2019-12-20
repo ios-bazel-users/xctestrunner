@@ -310,8 +310,6 @@ def CreateNewSimulator(device_type=None, os_version=None, name_prefix=None):
           'os versions are %s.' % (os_version, supported_sim_os_versions))
   if not device_type:
     device_type = GetLastSupportedIphoneSimType(os_version)
-  else:
-    _ValidateSimulatorTypeWithOsVersion(device_type, os_version)
   if not name_prefix:
     name_prefix = 'New'
   name = '%s-%s-%s' % (name_prefix, device_type, os_version)
@@ -580,34 +578,6 @@ def _ValidateSimulatorType(device_type):
     raise ios_errors.IllegalArgumentError(
         'The simulator device type %s is not supported. Supported simulator '
         'device types are %s.' % (device_type, supported_sim_device_types))
-
-
-def _ValidateSimulatorTypeWithOsVersion(device_type, os_version):
-  """Checks if the simulator type with the given os version is valid.
-
-  Args:
-    device_type: string, device type of the new simulator. The value corresponds
-      to the output of `xcrun simctl list devicetypes`. E.g., iPhone 6, iPad
-      Air, etc.
-    os_version: string, OS version of the new simulator. The format is
-      {major}.{minor}, such as 9.3, 10.2.
-
-  Raises:
-    ios_errors.IllegalArgumentError: when the given simulator device type can
-        not match the given OS version.
-  """
-  os_version_float = float(os_version)
-  sim_profile = simtype_profile.SimTypeProfile(device_type)
-  min_os_version_float = float(sim_profile.min_os_version)
-  if min_os_version_float > os_version_float:
-    raise ios_errors.IllegalArgumentError(
-        'The min OS version of %s is %s. But current OS version is %s' %
-        (device_type, min_os_version_float, os_version))
-  max_os_version_float = float(sim_profile.max_os_version)
-  if max_os_version_float < os_version_float:
-    raise ios_errors.IllegalArgumentError(
-        'The max OS version of %s is %s. But current OS version is %s' %
-        (device_type, max_os_version_float, os_version))
 
 
 def QuitSimulatorApp():
