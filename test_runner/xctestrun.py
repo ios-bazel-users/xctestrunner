@@ -292,7 +292,6 @@ class XctestRunFactory(object):
     self._xctestrun_obj = None
     self._xctestrun_dict = None
     self._delete_work_dir = False
-    self._ValidateArguments()
 
   def __enter__(self):
     return self.GenerateXctestrun()
@@ -366,26 +365,6 @@ class XctestRunFactory(object):
     """Deletes the temp directories."""
     if self._delete_work_dir and os.path.exists(self._work_dir):
       shutil.rmtree(self._work_dir)
-
-  def _ValidateArguments(self):
-    """Checks whether the arguments of this class are valid.
-
-    Raises:
-      IllegalArgumentError: when the sdk or test type is not supported.
-    """
-    if self._sdk not in ios_constants.SUPPORTED_SDKS:
-      raise ios_errors.IllegalArgumentError(
-          'The sdk %s is not supported. Supported sdks are %s.'
-          % (self._sdk, ios_constants.SUPPORTED_SDKS))
-    if self._test_type not in ios_constants.SUPPORTED_TEST_TYPES:
-      raise ios_errors.IllegalArgumentError(
-          'The test type %s is not supported. Supported test types are %s.'
-          % (self._test_type, ios_constants.SUPPORTED_TEST_TYPES))
-    if (self._test_type == ios_constants.TestType.LOGIC_TEST and
-        self._on_device):
-      raise ios_errors.IllegalArgumentError(
-          'Only support running logic test on sdk iphonesimulator. '
-          'Current sdk is %s' % self._sdk)
 
   def _GenerateTestRootForXcuitest(self):
     """Generates the test root for XCUITest.
